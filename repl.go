@@ -3,13 +3,32 @@ package main
 import (
 	"bufio"
 	"fmt"
+
+	// "log"
 	"os"
 	"strings"
+
+	"github.com/jeffrey1200/pokedexcli/internal/pokeapi"
 )
 
-func startRepl() {
+func startRepl(cfg *config) {
 	reader := bufio.NewScanner(os.Stdin)
+	// data := pokeapi.GetLocationAreas()
+	// areas, err := pokeapi.GetLocationAreas()
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
 
+	// var previousUrl string
+	// if areas.Previous == nil {
+	// 	previousUrl = "There is no page to go back to"
+
+	// } else {
+
+	// 	previousUrl = *areas.Previous
+	// }
+	// nextUrl := *areas.Next
+	// fmt.Printf("the prevUrl:%v, nextUlr:%v, all areas:%v", previousUrl, nextUrl, areas.Results)
 	for {
 		fmt.Print("Podekex > ")
 		reader.Scan()
@@ -25,7 +44,7 @@ func startRepl() {
 		command, exists := getCommands()[commandName]
 
 		if exists {
-			err := command.callback()
+			err := command.callback(cfg)
 			if err != nil {
 				fmt.Println(err)
 			}
@@ -44,10 +63,16 @@ func clearInput(text string) []string {
 	return words
 }
 
+type config struct {
+	pokeapiClient    pokeapi.Client
+	nextLocationsURL *string
+	prevLocationsURL *string
+}
+
 type cliCommand struct {
 	name        string
 	description string
-	callback    func() error
+	callback    func(*config) error
 }
 
 func getCommands() map[string]cliCommand {
@@ -58,6 +83,18 @@ func getCommands() map[string]cliCommand {
 			description: "Display a help message",
 			callback:    commandhelp,
 		},
+
+		"map": {
+			name:        "map",
+			description: "Get the next page of locations",
+			callback:    commandMapf,
+		},
+		"mapb": {
+			name:        "mapb",
+			description: "Get the previous page of locations",
+			callback:    commandMapb,
+		},
+
 		"exit": {
 			name:        "exit",
 			description: "Exit the Pokedex",
