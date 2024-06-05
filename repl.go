@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"time"
 
 	// "log"
 	"os"
@@ -44,7 +45,12 @@ func startRepl(cfg *config) {
 		command, exists := getCommands()[commandName]
 
 		if exists {
+			startTime := time.Now()
 			err := command.callback(cfg)
+
+			endTime := time.Now()
+			executionTIme := endTime.Sub(startTime)
+			fmt.Printf("Function executed in: %v/n", executionTIme)
 			if err != nil {
 				fmt.Println(err)
 			}
