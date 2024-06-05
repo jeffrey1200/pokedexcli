@@ -14,22 +14,6 @@ import (
 
 func startRepl(cfg *config) {
 	reader := bufio.NewScanner(os.Stdin)
-	// data := pokeapi.GetLocationAreas()
-	// areas, err := pokeapi.GetLocationAreas()
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-
-	// var previousUrl string
-	// if areas.Previous == nil {
-	// 	previousUrl = "There is no page to go back to"
-
-	// } else {
-
-	// 	previousUrl = *areas.Previous
-	// }
-	// nextUrl := *areas.Next
-	// fmt.Printf("the prevUrl:%v, nextUlr:%v, all areas:%v", previousUrl, nextUrl, areas.Results)
 	for {
 		fmt.Print("Podekex > ")
 		reader.Scan()
@@ -41,16 +25,23 @@ func startRepl(cfg *config) {
 		}
 
 		commandName := words[0]
+		args := []string{}
+		if len(words) > 1 {
+			args = words[1:]
+		}
 
 		command, exists := getCommands()[commandName]
 
 		if exists {
+
 			startTime := time.Now()
-			err := command.callback(cfg)
+			err := command.callback(cfg, args...)
 
 			endTime := time.Now()
+			// test, er := cfg.pokeapiClient.GetPokemonsInArea("sunyshore-city-area")
+			// fmt.Printf("these are the pokemons: %v, error if any:%v", test.Pokemon_encounters, er)
 			executionTIme := endTime.Sub(startTime)
-			fmt.Printf("Function executed in: %v/n", executionTIme)
+			fmt.Printf("Function executed in: %v/n, second command: %v", executionTIme, args)
 			if err != nil {
 				fmt.Println(err)
 			}
@@ -78,7 +69,7 @@ type config struct {
 type cliCommand struct {
 	name        string
 	description string
-	callback    func(*config) error
+	callback    func(*config, ...string) error
 }
 
 func getCommands() map[string]cliCommand {
@@ -88,6 +79,11 @@ func getCommands() map[string]cliCommand {
 			name:        "help",
 			description: "Display a help message",
 			callback:    commandhelp,
+		},
+		"explore": {
+			name:        "explore",
+			description: "Display pokemons in the given location",
+			callback:    commandExplore,
 		},
 
 		"map": {

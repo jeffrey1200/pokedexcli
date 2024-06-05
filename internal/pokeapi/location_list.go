@@ -46,5 +46,7 @@ func (c *Client) ListLocation(pageUrl *string) (LocationArea, error) {
 		return LocationArea{}, err
 	}
 
+	c.cache.Add(url, dat)
+
 	return locationResp, nil
 }
