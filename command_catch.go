@@ -17,15 +17,17 @@ func commandCatch(cfg *config, args ...string) error {
 	if err != nil {
 		return err
 	}
-	// catchRate := 100
+
 	isPokemonCatched := tryToCatch(pokemon.BaseExperience)
 	fmt.Printf("Throwing a pokeball at %s...", pokemon.Name)
-	if isPokemonCatched {
-		fmt.Printf("%s has been caught!", pokemon.Name)
-	} else {
-		fmt.Printf("%s has escaped", pokemon.Name)
-	}
+	if !isPokemonCatched {
 
+		fmt.Printf("%s has escaped!\n", pokemon.Name)
+		return nil
+	}
+	fmt.Printf("%s has been caught!\n", pokemon.Name)
+
+	cfg.caughtPokemon[pokemon.Name] = pokemon
 	return nil
 }
 
