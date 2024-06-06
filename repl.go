@@ -36,12 +36,12 @@ func startRepl(cfg *config) {
 
 			startTime := time.Now()
 			err := command.callback(cfg, args...)
-
+			// pokemon, _ := cfg.pokeapiClient.GetPokemon("pikachu")
 			endTime := time.Now()
 			// test, er := cfg.pokeapiClient.GetPokemonsInArea("sunyshore-city-area")
 			// fmt.Printf("these are the pokemons: %v, error if any:%v", test.Pokemon_encounters, er)
 			executionTIme := endTime.Sub(startTime)
-			fmt.Printf("Function executed in: %v/n, second command: %v", executionTIme, args)
+			fmt.Printf("Function executed in: %v\n", executionTIme)
 			if err != nil {
 				fmt.Println(err)
 			}
@@ -84,6 +84,11 @@ func getCommands() map[string]cliCommand {
 			name:        "explore",
 			description: "Display pokemons in the given location",
 			callback:    commandExplore,
+		},
+		"catch": {
+			name:        "catch",
+			description: "Gives you the chance to capture a pokemon",
+			callback:    commandCatch,
 		},
 
 		"map": {
